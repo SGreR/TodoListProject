@@ -1,6 +1,8 @@
+import TaskListContainer from "../components/TaskListContainer";
+
 function AllTasksPage() {
-  return (
-    <p>All Tasks Page</p>
+    return (
+        <TaskListContainer/>
   );
 }
 

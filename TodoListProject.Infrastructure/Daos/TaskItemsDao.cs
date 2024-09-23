@@ -57,7 +57,7 @@ namespace TodoListProject.Infrastructure.Daos
             }
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAllAsync(string sortBy, string filter)
+        public async Task<IEnumerable<TaskItem>> GetAllAsync()
         {
             try
             {

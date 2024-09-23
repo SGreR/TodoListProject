@@ -43,11 +43,11 @@ namespace TodoListProject.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAll(string sortBy, string filter)
+        public async Task<IEnumerable<TaskItem>> GetAll()
         {
             try
             {
-                return await _taskItemsDao.GetAllAsync(sortBy, filter);
+                return await _taskItemsDao.GetAllAsync();
             }
             catch (Exception ex)
             {

@@ -20,9 +20,9 @@ namespace TodoListProject.Server.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetAll(string sortBy = "", string filter = "")
+        public async Task<ActionResult<IEnumerable<TaskItem>>> GetAll()
         {
-            var taskItems = await _taskItemsRepository.GetAll(sortBy, filter);
+            var taskItems = await _taskItemsRepository.GetAll();
             if (taskItems == null || !taskItems.Any())
             {
                 return NoContent();
