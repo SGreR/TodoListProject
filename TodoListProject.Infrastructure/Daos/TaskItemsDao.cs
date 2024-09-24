@@ -6,7 +6,7 @@ using TodoListProject.Infrastructure.Data;
 
 namespace TodoListProject.Infrastructure.Daos
 {
-    public class TaskItemsDao : IDao<TaskItem>
+    public class TaskItemsDao : IDao<TaskItem, TaskItemFilter>
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<TaskItemsDao> _logger;
@@ -57,7 +57,7 @@ namespace TodoListProject.Infrastructure.Daos
             }
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAllAsync()
+        public async Task<IEnumerable<TaskItem>> GetAllAsync(TaskItemFilter filters)
         {
             try
             {

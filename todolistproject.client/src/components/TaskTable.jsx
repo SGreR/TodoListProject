@@ -1,27 +1,7 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import { Box, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { visuallyHidden } from '@mui/utils';
 import TaskTableToolbar from './TaskTableToolbar';
 import TaskTableHeader from './TaskTableHeader.jsx';
 import ModalCard from './ModalCard';
@@ -79,6 +59,10 @@ export default function TaskTable() {
     const [open, setOpen] = React.useState(false);
     const [mode, setMode] = React.useState("Edit");
 
+    const fetchTasks = (filters) => {
+        console.log("Fetching with filters: ", filters);
+    }
+
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -104,8 +88,6 @@ export default function TaskTable() {
 
     const handleClick = (event, mode, row) => {
         event.stopPropagation();
-        console.log(mode);
-        console.log(row);
         setMode(mode);
         setSelectedRow(row);
         setOpen(!open);
@@ -127,74 +109,77 @@ export default function TaskTable() {
     );
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-                <TaskTableToolbar />
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 750 }}
-                        aria-labelledby="tableTitle"
-                        size={'small'}
-                    >
-                        <TaskTableHeader
-                            order={order}
-                            orderBy={orderBy}
-                            onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
-                        />
-                        <TableBody>
-                            {visibleRows.map((row, index) => {
-                                const labelId = `enhanced-table-checkbox-${index}`;
+        <TableContainer>
+            <Box sx={{ width: '100%' }}>
+                <Paper sx={{ width: '100%', mb: 2 }}>
+                    <TaskTableToolbar onSearch={fetchTasks} />
+                    <TableContainer>
+                        <Table
+                            sx={{ minWidth: 750 }}
+                            aria-labelledby="tableTitle"
+                            size={'small'}
+                        >
+                            <TaskTableHeader
+                                order={order}
+                                orderBy={orderBy}
+                                onRequestSort={handleRequestSort}
+                                rowCount={rows.length}
+                            />
+                            <TableBody>
+                                {visibleRows.map((row, index) => {
+                                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                                return (
-                                    <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, "Details", row)}
-                                        key={row.id}
-                                        sx={{ cursor: 'pointer' }}
-                                    >
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
+                                    return (
+                                        <TableRow
+                                            hover
+                                            onClick={(event) => handleClick(event, "Details", row)}
+                                            key={row.id}
+                                            sx={{ cursor: 'pointer' }}
                                         >
-                                            {row.id + row.title}
-                                        </TableCell>
-                                        <TableCell >{row.description}</TableCell>
-                                        <TableCell ><Switch checked={row.completed} onChange={(event) => handleChangeCompleted(event,row.id)} onClick={(event) => event.stopPropagation()} /></TableCell>
-                                        <TableCell >{row.created}</TableCell>
-                                        <TableCell >
-                                            <>
-                                                <EditIcon onClick={(event) => handleClick(event, "Edit", row)} />
-                                                <DeleteIcon onClick={(event) => handleClick(event, "Delete", row)} />
-                                            </>
-                                        </TableCell>
+                                            <TableCell
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                            >
+                                                {row.id + row.title}
+                                            </TableCell>
+                                            <TableCell >{row.description}</TableCell>
+                                            <TableCell ><Switch checked={row.completed} onChange={(event) => handleChangeCompleted(event, row.id)} onClick={(event) => event.stopPropagation()} /></TableCell>
+                                            <TableCell >{row.created}</TableCell>
+                                            <TableCell >
+                                                <>
+                                                    <EditIcon onClick={(event) => handleClick(event, "Edit", row)} />
+                                                    <DeleteIcon onClick={(event) => handleClick(event, "Delete", row)} />
+                                                </>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                                {emptyRows > 0 && (
+                                    <TableRow
+                                        style={{
+                                            height: (33) * emptyRows,
+                                        }}
+                                    >
+                                        <TableCell colSpan={6} />
                                     </TableRow>
-                                );
-                            })}
-                            {emptyRows > 0 && (
-                                <TableRow
-                                    style={{
-                                        height: (33) * emptyRows,
-                                    }}
-                                >
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Paper>
-            <ModalCard open={open} onClose={handleCloseModal} mode={mode} row={selectedRow} />
-        </Box>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </Paper>
+                <ModalCard open={open} onClose={handleCloseModal} mode={mode} row={selectedRow} onDataChange={fetchTasks} />
+            </Box>
+        </TableContainer>
+        
     );
 }

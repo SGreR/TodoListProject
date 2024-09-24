@@ -57,34 +57,6 @@ function ResponsiveLayout() {
                         <ListItemText primary={'All Tasks'} />
                     </ListItemButton>
                 </ListItem>
-                <ListItem
-                    key='Finished'
-                    component={Link}
-                    to={"/finished-tasks"}
-                    disablePadding
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <CheckBoxRoundedIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Finished Tasks'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem
-                    key='Unfinished'
-                    component={Link}
-                    to={"/unfinished-tasks"}
-                    disablePadding
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <CheckBoxOutlineBlankRoundedIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Unfinished Tasks'} />
-                    </ListItemButton>
-                </ListItem>
             </List>
         </div>
     );

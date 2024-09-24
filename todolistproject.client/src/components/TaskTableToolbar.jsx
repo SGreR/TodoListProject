@@ -1,37 +1,48 @@
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Toolbar, Typography, IconButton, Tooltip, Input, Button, Box } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
+import ModalCard from './ModalCard';
 
-function TaskTableToolbar(props) {
-    const { numSelected } = props;
+function TaskTableToolbar({ onSearch, onDataChange }) {
+    const [open, setOpen] = useState(false)
+    const [filters, setFilters] = useState({
+        title: null,
+        description: null,
+        created: null
+    })
+    const [visible, setVisible] = useState(false)
+
+    const handleSearch = () => {
+        onSearch(filters)
+    }
+
+    const handleClear = () => {
+        setFilters({
+            title: null,
+            description: null,
+            created: null
+        })
+    }
+
+    const handleChange = (event) => {
+        const field = event.target.name
+        const value = event.target.value
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [field]: value
+        }))
+    }
+
+    const handleSave = (task) => {
+        //API call to save task
+        console.log("Saving task: ", task)
+        onDataChange() //inside response
+    }
+
     return (
-        <Toolbar
-            sx={[
-                {
-                    pl: { sm: 2 },
-                    pr: { xs: 1, sm: 1 },
-                },
-                numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                },
-            ]}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
+        <>
+            <Toolbar>
+                <Button variant="contained" onClick={() => setOpen(true)}>Add</Button>
                 <Typography
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
@@ -40,26 +51,40 @@ function TaskTableToolbar(props) {
                 >
                     Tasks
                 </Typography>
-            )}
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
+                
                 <Tooltip title="Filter list">
                     <IconButton>
-                        <FilterListIcon />
+                        <FilterListIcon onClick={() => setVisible(!visible)} />
                     </IconButton>
                 </Tooltip>
-            )}
-        </Toolbar>
-    );
+            </Toolbar>
+            {visible &&
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <Typography variant="body1">Filters:</Typography>
+                    <Input
+                        name="title"
+                        placeholder="Task Name"
+                        onChange={handleChange}
+                    />
+                    <Input
+                        name="description"
+                        placeholder="Task Description"
+                        onChange={handleChange}
+                    />
+                    <Input
+                        name="created"
+                        placeholder="Created"
+                        onChange={handleChange}
+                    />
+                    <Box sx={{ display: 'flex', flexDirection: 'column'}}>
+                        <Button variant="contained" onClick={handleSearch}>Search</Button>
+                        <Button variant="outlined" onClick={handleClear}>Clear Filters</Button>
+                    </Box>
+                </Box>
+            }
+            <ModalCard open={open} onClose={() => setOpen(false)} mode={"Add"} onDataChange={handleSave} />
+        </>
+        
+    )
 }
-
-TaskTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-};
-
 export default TaskTableToolbar;

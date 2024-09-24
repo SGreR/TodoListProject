@@ -1,8 +1,8 @@
-import TaskListContainer from "../components/TaskListContainer";
+import TaskTable from "../components/TaskTable";
 
 function AllTasksPage() {
     return (
-        <TaskListContainer/>
+        <TaskTable />
   );
 }
 

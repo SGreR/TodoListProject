@@ -5,12 +5,12 @@ using TodoListProject.Business.Interfaces;
 
 namespace TodoListProject.Infrastructure.Repositories
 {
-    public class TaskItemsRepository : IRepository<TaskItem>
+    public class TaskItemsRepository : IRepository<TaskItem, TaskItemFilter>
     {
-        private readonly IDao<TaskItem> _taskItemsDao;
+        private readonly IDao<TaskItem, TaskItemFilter> _taskItemsDao;
         private readonly ILogger<TaskItemsRepository> _logger;
 
-        public TaskItemsRepository(IDao<TaskItem> taskItemsDao, ILogger<TaskItemsRepository> logger)
+        public TaskItemsRepository(IDao<TaskItem, TaskItemFilter> taskItemsDao, ILogger<TaskItemsRepository> logger)
         {
             _taskItemsDao = taskItemsDao;
             _logger = logger;
@@ -43,11 +43,11 @@ namespace TodoListProject.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAll()
+        public async Task<IEnumerable<TaskItem>> GetAll(TaskItemFilter filters)
         {
             try
             {
-                return await _taskItemsDao.GetAllAsync();
+                return await _taskItemsDao.GetAllAsync(filters);
             }
             catch (Exception ex)
             {

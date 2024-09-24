@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import DetailsModal from './DetailsModal';
+import EditModal from './EditModal';
+import DeleteModal from './DeleteModal';
+import AddModal from './AddModal';
 
 const style = {
     position: 'absolute',
@@ -15,7 +19,7 @@ const style = {
     p: 4,
 };
 
-const ModalCard = ({ open, onClose, mode, row }) => {
+const ModalCard = ({ open, onClose, mode, row, onDataChange }) => {
     
     return (
         <>
@@ -24,12 +28,10 @@ const ModalCard = ({ open, onClose, mode, row }) => {
                 onClose={onClose}
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        {mode}
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        {row && row.id + row.title + row.description + row.created }
-                    </Typography>
+                    {mode === "Add" && <AddModal onDataChange={onDataChange} />}
+                    {mode === "Details" && <DetailsModal row={row} />}
+                    {mode === "Edit" && <EditModal initialRow={row} onDataChange={onDataChange} />}
+                    {mode === "Delete" && <DeleteModal row={row} onDataChange={onDataChange} />}
                 </Box>
             </Modal>
         </>
