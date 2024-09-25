@@ -55,8 +55,8 @@ function TaskTableToolbar({ onSearch, onDataChange }) {
                 </Typography>
                 
                 <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon onClick={() => setVisible(!visible)} />
+                    <IconButton onClick={() => setVisible(!visible)}>
+                        <FilterListIcon />
                     </IconButton>
                 </Tooltip>
             </Toolbar>

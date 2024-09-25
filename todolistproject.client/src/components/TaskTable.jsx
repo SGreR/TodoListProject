@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper, Switch, Alert } from '@mui/material';
-import { DeleteIcon, EditIcon } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import TaskTableToolbar from './TaskTableToolbar';
 import TaskTableHeader from './TaskTableHeader.jsx';
 import ModalCard from './ModalCard';

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
-import { MenuIcon, RuleRoundedIcon} from '@mui/icons-material';
+import RuleRoundedIcon from '@mui/icons-material/RuleRounded';
+import MenuIcon from '@mui/icons-material/Menu';
+
 import CustomRouter from '../components/CustomRouter.jsx'
 import { Link } from 'react-router-dom';
 
