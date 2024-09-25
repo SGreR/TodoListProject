@@ -1,5 +1,6 @@
 import { Typography, Input, Switch, Button, Alert, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { putTask } from '../utils/APIService';
 
 function EditModal({ initialRow, onDataChange }) {
     const [row, setRow] = useState(initialRow)
@@ -12,7 +13,7 @@ function EditModal({ initialRow, onDataChange }) {
 
     const handleChange = (event) => {
         const field = event.target.name;
-        const value = field === 'completed' ? event.target.checked : event.target.value;
+        const value = field === 'isCompleted' ? event.target.checked : event.target.value;
 
         setRow((prevRow) => {
             const updatedRow = { ...prevRow, [field]: value };
@@ -26,11 +27,11 @@ function EditModal({ initialRow, onDataChange }) {
         const isDescriptionValid = !isNullOrEmptyOrWhitespace(task.description);
 
         if (!isTitleValid) {
-            setAlert('Title cannot be empty.');
+            setAlert({ message: 'Title cannot be empty.', type: "error" });
             return false;
         }
         if (!isDescriptionValid) {
-            setAlert('Description cannot be empty.');
+            setAlert({ message: 'Description cannot be empty.', type: "error" });
             return false;
         }
 
@@ -43,14 +44,32 @@ function EditModal({ initialRow, onDataChange }) {
     }
 
     const handleUpdate = () => {
-        //API call to update
-        console.log("Making PUT API call")
-        onDataChange(); //inside response handling
+        putTask(row.id, row)
+            .then(response => {
+                if (response.status === 200) {
+                    setAlert({ message: "Task updated successfully!", type: "success" })
+                }
+            })
+            .catch(error => {
+                if (error.response) {
+                    setAlert({ message: `Error: ${error.response.data}`, type: "error" });
+                } else if (error.request) {
+                    setAlert({ message: "Error: No response from the server", type: "error" });
+                } else {
+                    setAlert({ message: `Error: ${error.message}`, type: "error" });
+                }
+            });
+
+        const timeoutId = setTimeout(() => {
+            setAlert(null);
+            onDataChange();
+        }, 3000);
+        return () => clearTimeout(timeoutId);
     }
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            {alert && <Alert severity="error">{alert}</Alert>}
+            {alert && <Alert severity={alert.type }>{alert.message}</Alert>}
             <Typography id="modal-modal-title" variant="h4" component="h2">
                 {'Editing Task'}
             </Typography>
@@ -77,12 +96,12 @@ function EditModal({ initialRow, onDataChange }) {
                 {row && 'Completed: '}
             </Typography>
             <Switch
-                name="completed"
-                checked={row.completed}
+                name="isCompleted"
+                checked={row.isCompleted}
                 onChange={handleChange}
             />
             <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                {row && 'Created on: ' + row.created}
+                {row && 'Created on: ' + row.userReadableDate}
             </Typography>
             <Button sx={{ width: 'fit-content' }} disabled={row === initialRow || !isTaskValid} color="primary" variant="contained" onClick={handleUpdate}>Save Changes</Button >
         </Box>

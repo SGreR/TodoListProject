@@ -14,8 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Add services to the container.
-builder.Services.AddScoped<IDao<TaskItem>, TaskItemsDao>();
-builder.Services.AddScoped<IRepository<TaskItem>, TaskItemsRepository>();
+builder.Services.AddScoped<IDao<TaskItem, TaskItemFilter>, TaskItemsDao>();
+builder.Services.AddScoped<IRepository<TaskItem, TaskItemFilter>, TaskItemsRepository>();
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

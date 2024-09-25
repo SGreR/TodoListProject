@@ -1,66 +1,40 @@
-import * as React from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper, Switch } from '@mui/material';
+import { useState, useEffect, useMemo } from 'react';
+import { Box, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper, Switch, Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import TaskTableToolbar from './TaskTableToolbar';
 import TaskTableHeader from './TaskTableHeader.jsx';
 import ModalCard from './ModalCard';
+import { getAllTasks, putTask } from '../utils/APIService';
+import { getComparator, formatDate } from '../utils/HelperFunctions.jsx'
 
-
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function getComparator(order, orderBy) {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function createData(id, title, description, completed, created) {
-    return {
-        id,
-        title,
-        description,
-        completed,
-        created,
-    };
-}
-
-const initialRows = [
-    createData(1, 'Task 1', 'Task 1 Description', true, '01/01/2000'),
-    createData(2, 'Task 2', 'Task 2 Description', false, '02/02/2001'),
-    createData(3, 'Task 3', 'Task 3 Description', true, '03/03/2002'),
-    createData(4, 'Task 4', 'Task 4 Description', false, '04/04/2003'),
-    createData(5, 'Task 5', 'Task 5 Description', true, '05/05/2004'),
-    createData(6, 'Task 6', 'Task 6 Description', false, '06/06/2005'),
-    createData(7, 'Task 7', 'Task 7 Description', true, '07/07/2006'),
-    createData(8, 'Task 8', 'Task 8 Description', false, '08/08/2007'),
-    createData(9, 'Task 9', 'Task 9 Description', true, '09/09/2008'),
-    createData(10, 'Task 10', 'Task 10 Description', false, '10/10/2009'),
-    createData(11, 'Task 11', 'Task 11 Description', true, '11/11/2010'),
-    createData(12, 'Task 12', 'Task 12 Description', false, '12/12/2011'),
-    createData(13, 'Task 13', 'Task 13 Description', true, '01/01/2012')
-];
 
 export default function TaskTable() {
-    const [order, setOrder] = React.useState('desc');
-    const [orderBy, setOrderBy] = React.useState('created');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [rows, setRows] = React.useState(initialRows);
-    const [selectedRow, setSelectedRow] = React.useState(null)
-    const [open, setOpen] = React.useState(false);
-    const [mode, setMode] = React.useState("Edit");
+    const [order, setOrder] = useState('desc');
+    const [orderBy, setOrderBy] = useState('createdAt');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rows, setRows] = useState([]);
+    const [selectedRow, setSelectedRow] = useState(null)
+    const [open, setOpen] = useState(false);
+    const [mode, setMode] = useState("Edit");
+    const [alert, setAlert] = useState(null);
+
+    useEffect(() => {
+        fetchTasks(null)
+    },[])
 
     const fetchTasks = (filters) => {
-        console.log("Fetching with filters: ", filters);
+        getAllTasks(filters)
+            .then(response => {
+                if (response.status === 200 || response.status === 204) {
+                    const formattedData = response.data.map(task => ({
+                        ...task,
+                        userReadableDate: formatDate(task.createdAt)
+                    }))
+                    console.log(formattedData)
+                    setRows(formattedData);
+            } })
     }
 
     const handleRequestSort = (event, property) => {
@@ -79,11 +53,32 @@ export default function TaskTable() {
     };
 
     const handleChangeCompleted = (event, id) => {
-        setRows((prevRows) =>
-            prevRows.map((row) =>
-                row.id === id ? { ...row, completed: event.target.checked } : row
-            )
-        );
+        let changedTask = rows.find(t => t.id === id);
+        changedTask = {...changedTask, isCompleted: event.target.checked };
+        putTask(id, changedTask)
+            .then(response => {
+                if (response.status === 200) {
+                    setAlert({ message: "Task updated successfully!", type: "success" })
+                    setRows((prevRows) =>
+                        prevRows.map((row) =>
+                            row.id === id ? { ...response.data, userReadableDate: formatDate(response.data.createdAt) } : row
+                        )
+                    );
+                }
+            })
+            .catch(error => {
+                if (error.response) {
+                    setAlert({ message: `Error: ${error.response.data}`, type: "error" });
+                } else if (error.request) {
+                    setAlert({ message: "Error: No response from the server", type: "error" });
+                } else {
+                    setAlert({ message: `Error: ${error.message}`, type: "error" });
+                }
+            });
+        const timeoutId = setTimeout(() => {
+            setAlert(null);
+        }, 3000);
+        return () => clearTimeout(timeoutId);
     };
 
     const handleClick = (event, mode, row) => {
@@ -100,7 +95,7 @@ export default function TaskTable() {
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const visibleRows = React.useMemo(
+    const visibleRows = useMemo(
         () =>
             [...rows]
                 .sort(getComparator(order, orderBy))
@@ -108,11 +103,17 @@ export default function TaskTable() {
         [order, orderBy, page, rowsPerPage, rows],
     );
 
+    const handleDataChange = (filter) => {
+        fetchTasks(filter);
+        handleCloseModal();
+    }
+
     return (
         <TableContainer>
+            {alert && <Alert severity={alert.type}>{alert.message}</Alert>}
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
-                    <TaskTableToolbar onSearch={fetchTasks} />
+                    <TaskTableToolbar onSearch={(filters) => fetchTasks(filters)} onDataChange={fetchTasks} />
                     <TableContainer>
                         <Table
                             sx={{ minWidth: 750 }}
@@ -141,11 +142,11 @@ export default function TaskTable() {
                                                 id={labelId}
                                                 scope="row"
                                             >
-                                                {row.id + row.title}
+                                                {row.title}
                                             </TableCell>
                                             <TableCell >{row.description}</TableCell>
-                                            <TableCell ><Switch checked={row.completed} onChange={(event) => handleChangeCompleted(event, row.id)} onClick={(event) => event.stopPropagation()} /></TableCell>
-                                            <TableCell >{row.created}</TableCell>
+                                            <TableCell ><Switch checked={row.isCompleted} onChange={(event) => handleChangeCompleted(event, row.id)} onClick={(event) => event.stopPropagation()} /></TableCell>
+                                            <TableCell >{row.userReadableDate}</TableCell>
                                             <TableCell >
                                                 <>
                                                     <EditIcon onClick={(event) => handleClick(event, "Edit", row)} />
@@ -177,7 +178,7 @@ export default function TaskTable() {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Paper>
-                <ModalCard open={open} onClose={handleCloseModal} mode={mode} row={selectedRow} onDataChange={fetchTasks} />
+                <ModalCard open={open} onClose={handleCloseModal} mode={mode} row={selectedRow} onDataChange={handleDataChange} />
             </Box>
         </TableContainer>
         

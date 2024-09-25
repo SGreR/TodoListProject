@@ -8,15 +8,17 @@ namespace TodoListProject.Business.Models
 {
     public class TaskItemFilter
     {
-        string Title { get; set; }
-        string Description { get; set; }
-        DateTime Created { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public DateTime? Created { get; set; }
 
-        public TaskItemFilter(string title, string description, string created)
+        public TaskItemFilter() { }
+
+        public TaskItemFilter(string title = "", string description = "", string created = "")
         {
-            Title = title;
-            Description = description;
-            Created = DateTime.Parse(created);
+            this.Title = title;
+            this.Description = description;
+            this.Created = string.IsNullOrEmpty(created) ? (DateTime?)null : DateTime.Parse(created);
         }
     }
 }

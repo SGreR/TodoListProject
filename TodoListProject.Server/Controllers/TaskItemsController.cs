@@ -10,9 +10,9 @@ namespace TodoListProject.Server.Controllers
     [Route("/api/tasks")]
     public class TaskItemsController : Controller
     {
-        private readonly IRepository<TaskItem> _taskItemsRepository;
+        private readonly IRepository<TaskItem, TaskItemFilter> _taskItemsRepository;
 
-        public TaskItemsController(IRepository<TaskItem> taskItemsRepositoy)
+        public TaskItemsController(IRepository<TaskItem, TaskItemFilter> taskItemsRepositoy)
         {
             _taskItemsRepository = taskItemsRepositoy;
         }
@@ -20,7 +20,7 @@ namespace TodoListProject.Server.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetAll([FromQuery]TaskFilters filters)
+        public async Task<ActionResult<IEnumerable<TaskItem>>> GetAll([FromQuery] TaskItemFilter filters)
         {
             var taskItems = await _taskItemsRepository.GetAll(filters);
             if (taskItems == null || !taskItems.Any())
@@ -65,7 +65,7 @@ namespace TodoListProject.Server.Controllers
             try
             {
                 await _taskItemsRepository.Add(taskItem);
-                return Created();
+                return CreatedAtAction(nameof(GetById), new { id = taskItem.Id},taskItem);
             }
             catch (Exception ex)
             {

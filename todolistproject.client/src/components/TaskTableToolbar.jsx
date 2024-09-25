@@ -6,9 +6,9 @@ import ModalCard from './ModalCard';
 function TaskTableToolbar({ onSearch, onDataChange }) {
     const [open, setOpen] = useState(false)
     const [filters, setFilters] = useState({
-        title: null,
-        description: null,
-        created: null
+        title: '',
+        description: '',
+        created: ''
     })
     const [visible, setVisible] = useState(false)
 
@@ -17,11 +17,14 @@ function TaskTableToolbar({ onSearch, onDataChange }) {
     }
 
     const handleClear = () => {
-        setFilters({
-            title: null,
-            description: null,
-            created: null
-        })
+
+        const emptyFilter = {
+            title: '',
+            description: '',
+            created: ''
+        }
+        setFilters(emptyFilter);
+        onSearch(emptyFilter);
     }
 
     const handleChange = (event) => {
@@ -33,10 +36,9 @@ function TaskTableToolbar({ onSearch, onDataChange }) {
         }))
     }
 
-    const handleSave = (task) => {
-        //API call to save task
-        console.log("Saving task: ", task)
-        onDataChange() //inside response
+    const handleSave = () => {
+        setOpen(false);
+        onDataChange();
     }
 
     return (
@@ -65,16 +67,19 @@ function TaskTableToolbar({ onSearch, onDataChange }) {
                         name="title"
                         placeholder="Task Name"
                         onChange={handleChange}
+                        value={filters.title}
                     />
                     <Input
                         name="description"
                         placeholder="Task Description"
                         onChange={handleChange}
+                        value={filters.description}
                     />
                     <Input
                         name="created"
                         placeholder="Created"
                         onChange={handleChange}
+                        value={filters.created}
                     />
                     <Box sx={{ display: 'flex', flexDirection: 'column'}}>
                         <Button variant="contained" onClick={handleSearch}>Search</Button>

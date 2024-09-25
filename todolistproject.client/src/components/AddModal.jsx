@@ -1,5 +1,6 @@
 import { Typography, Input, Switch, Button, Alert, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { postTask } from '../utils/APIService.jsx'
 
 function AddModal({ onDataChange }) {
     const [alert, setAlert] = useState(null);
@@ -26,11 +27,11 @@ function AddModal({ onDataChange }) {
         const isDescriptionValid = !isNullOrEmptyOrWhitespace(task.description);
 
         if (!isTitleValid) {
-            setAlert('Title cannot be empty.');
+            setAlert({ message: 'Title cannot be empty.', type: "error" });
             return false;
         }
         if (!isDescriptionValid) {
-            setAlert('Description cannot be empty.');
+            setAlert({ message: 'Description cannot be empty.', type: "error" });
             return false;
         }
 
@@ -39,9 +40,27 @@ function AddModal({ onDataChange }) {
     };
 
     const handleSave = () => {
-        //API call to update
-        console.log("Making POST API call")
-        onDataChange(); //inside response handling
+        postTask(task)
+            .then(response => {
+                if (response.status === 201) {
+                    setAlert({message: "Task saved successfully!", type: "success"})
+                }
+            })
+            .catch(error => {
+                if (error.response) {
+                    setAlert({ message: `Error: ${error.response.data}`, type: "error" });
+                } else if (error.request) {
+                    setAlert({ message: "Error: No response from the server", type: "error" });
+                } else {
+                    setAlert({ message: `Error: ${error.message}`, type: "error" });
+                }
+            });
+
+        const timeoutId = setTimeout(() => {
+            setAlert(null);
+            onDataChange();
+        }, 3000);
+        return () => clearTimeout(timeoutId);
     }
 
     const isNullOrEmptyOrWhitespace = (value) => {
@@ -49,8 +68,8 @@ function AddModal({ onDataChange }) {
     }
 
     return (
-        <Box sx={{display: 'flex', flexDirection: 'column'} }>
-            {alert && <Alert severity="error">{alert}</Alert>}
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            {alert && <Alert severity={alert.type}>{alert.message}</Alert>}
             <Typography id="modal-modal-title" variant="h4" component="h2">
                 {'Adding Task'}
             </Typography>

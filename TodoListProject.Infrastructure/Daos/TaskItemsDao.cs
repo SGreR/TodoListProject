@@ -61,7 +61,23 @@ namespace TodoListProject.Infrastructure.Daos
         {
             try
             {
-                return await _context.TaskItems.ToListAsync();
+                IQueryable<TaskItem> query = _context.TaskItems.AsQueryable();
+                if (!string.IsNullOrEmpty(filters.Title))
+                {
+                    query = query.Where(t => t.Title.Contains(filters.Title));
+                }
+                if (!string.IsNullOrEmpty(filters.Description))
+                {
+                    query = query.Where(t => t.Description.Contains(filters.Description));
+                }
+                if (filters.Created != null && filters.Created != DateTime.MinValue)
+                {
+                    query = query.Where(t => 
+                    t.CreatedAt.Date.Year == filters.Created.Value.Date.Year && 
+                    t.CreatedAt.Date.Month == filters.Created.Value.Date.Month &&
+                    t.CreatedAt.Date.Day == filters.Created.Value.Date.Day);
+                }
+                return await query.ToListAsync();
             }
             catch (DbUpdateException dbEx)
             {

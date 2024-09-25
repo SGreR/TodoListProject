@@ -2,7 +2,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import { visuallyHidden } from '@mui/utils';
@@ -17,11 +16,11 @@ const headCells = [
         label: 'Description',
     },
     {
-        id: 'completed',
+        id: 'isCompleted',
         label: 'Completed',
     },
     {
-        id: 'created',
+        id: 'createdAt',
         label: 'Created',
     },
     {

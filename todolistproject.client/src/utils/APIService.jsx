@@ -2,8 +2,12 @@ import axios from 'axios';
 
 const API_BASE_URL = 'https://localhost:7208/api/tasks';
 
-export const getAllTasks = () => {
-    return axios.get(API_BASE_URL)
+export const getAllTasks = (filters) => {
+    return axios.get(API_BASE_URL, {
+        params: {
+            ...filters
+        }
+    })
 }
 
 export const getTaskById = (id) => {

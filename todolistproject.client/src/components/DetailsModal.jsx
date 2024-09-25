@@ -15,10 +15,10 @@ function DetailsModal({ row }) {
             </Typography>
             <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
                 {row && 'Completed: '}
-                {row.completed ? 'Yes' : 'No'}
+                {row.isCompleted ? 'Yes' : 'No'}
             </Typography>
             <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                {row && 'Created on: ' + row.created}
+                {row && 'Created on: ' + row.userReadableDate}
             </Typography>
         </Box>
     
