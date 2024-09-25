@@ -1,7 +1,7 @@
 # Aplicação de Gerenciamento de Tarefas (Todo List)
 
 ## Descrição
-Esta é uma aplicação de gerenciamento de tarefas desenvolvida como parte de um desafio técnico. A aplicação permite que os usuários criem, editem, excluam e visualizem tarefas, além de marcá-las como concluídas. Ela consiste em uma API RESTful feita com C# .NET Core para o backend e uma interrface de usuário com React para o frontend.
+Esta é uma aplicação de gerenciamento de tarefas desenvolvida como parte de um desafio técnico. A aplicação permite que os usuários criem, editem, excluam e visualizem tarefas, além de marcá-las como concluídas. Ela consiste em uma API RESTful feita com C# .NET Core para o backend e uma interface de usuário com React para o frontend.
 
 ## Funcionalidades
 - Criar novas tarefas.
