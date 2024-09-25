@@ -1,5 +1,5 @@
 import { Typography, Input, Switch, Button, Alert, Box } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { postTask } from '../utils/APIService.jsx'
 
 function AddModal({ onDataChange }) {

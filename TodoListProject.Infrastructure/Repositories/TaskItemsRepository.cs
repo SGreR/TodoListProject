@@ -1,7 +1,6 @@
-﻿using TodoListProject.Business.Models;
-using TodoListProject.Infrastructure.Daos;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using TodoListProject.Business.Interfaces;
+using TodoListProject.Business.Models;
 
 namespace TodoListProject.Infrastructure.Repositories
 {

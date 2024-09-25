@@ -1,9 +1,4 @@
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Box from '@mui/material/Box';
-import PropTypes from 'prop-types';
+import { TableHead, TableRow, TableCell, TableSortLabel, Box } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
 const headCells = [
@@ -64,14 +59,5 @@ function TaskTableHeader(props) {
         </TableHead>
     );
 }
-
-TaskTableHeader.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-};
 
 export default TaskTableHeader;

@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { Modal, Box } from '@mui/material';
 import DetailsModal from './DetailsModal';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';

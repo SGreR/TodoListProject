@@ -1,5 +1,3 @@
-
-
 function descendingComparator(a, b, orderBy) {
     const aValue = a[orderBy];
     const bValue = b[orderBy];

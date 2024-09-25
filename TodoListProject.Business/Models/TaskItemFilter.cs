@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TodoListProject.Business.Models
+﻿namespace TodoListProject.Business.Models
 {
     public class TaskItemFilter
     {
